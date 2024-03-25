@@ -1,4 +1,4 @@
-from diffusion.respace import SpacedDiffusion
+from .respace import SpacedDiffusion
 from .gaussian_diffusion import _extract_into_tensor
 import torch as th
 

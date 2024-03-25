@@ -1,6 +1,6 @@
 from copy import deepcopy
 import torch
-from utils import dist_util
+from priorMDM.utils import dist_util
 
 
 def unfold_sample_arb_len(sample, handshake_size, step_sizes, final_n_frames, model_kwargs):
@@ -166,4 +166,3 @@ def double_take_arb_len(args, diffusion, model, model_kwargs, n_frames, eval_mod
         model_kwargs['y']['text'].append(last_text)
 
     return samples_per_rep_list, samples_type
-

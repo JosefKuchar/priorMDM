@@ -1,5 +1,5 @@
-from data_loaders.humanml.networks.modules import *
-from data_loaders.humanml.utils.word_vectorizer import POS_enumerator
+from .modules import *
+from ..utils.word_vectorizer import POS_enumerator
 from os.path import join as pjoin
 
 

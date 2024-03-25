@@ -3,15 +3,15 @@ import os
 import torch
 import numpy as np
 
-from data_loaders.get_data import get_dataset_loader
-from data_loaders.humanml.scripts.motion_process import recover_from_ric
-from model.comMDM import ComMDM
+from ..data_loaders.get_data import get_dataset_loader
+from ..data_loaders.humanml.scripts.motion_process import recover_from_ric
+from ..model.comMDM import ComMDM
 import utils.rotation_conversions as geometry
-from model.cfg_sampler import UnconditionedModel
+from ..model.cfg_sampler import UnconditionedModel
 from utils import dist_util
-from utils.fixseed import fixseed
-from utils.model_util import load_model, load_model_wo_clip
-from utils.parser_util import evaluation_multi_parser
+from ..utils.fixseed import fixseed
+from ..utils.model_util import load_model, load_model_wo_clip
+from ..utils.parser_util import evaluation_multi_parser
 from diffusion import logger
 
 

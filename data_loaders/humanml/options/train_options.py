@@ -1,4 +1,4 @@
-from data_loaders.humanml.options.base_options import BaseOptions
+from .base_options import BaseOptions
 import argparse
 
 class TrainCompOptions(BaseOptions):

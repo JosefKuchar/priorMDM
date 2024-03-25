@@ -1,17 +1,17 @@
 import torch
 import torch.nn.functional as F
 import random
-from data_loaders.humanml.networks.modules import *
+from .modules import *
 from torch.utils.data import DataLoader
 import torch.optim as optim
 from torch.nn.utils import clip_grad_norm_
 # import tensorflow as tf
 from collections import OrderedDict
-from data_loaders.humanml.utils.utils import *
+from ..utils.utils import *
 from os.path import join as pjoin
-from data_loaders.humanml.data.dataset import collate_fn
+from ..data.dataset import collate_fn
 import codecs as cs
-from train.train_platforms import ClearmlPlatform, TensorboardPlatform, NoPlatform  # required for the eval operation
+from ....train.train_platforms import ClearmlPlatform, TensorboardPlatform, NoPlatform  # required for the eval operation
 
 
 class Logger(object):

@@ -5,15 +5,15 @@ import torch
 
 from data_loaders.amass.sampling import FrameSampler
 from data_loaders.amass.transforms import SMPLTransform
-from data_loaders.get_data import get_dataset_loader
-from data_loaders.humanml.options.train_options import TrainTexMotMatchOptions
+from ..get_data import get_dataset_loader
+from .options.train_options import TrainTexMotMatchOptions
 
-from data_loaders.humanml.networks.modules import *
-from data_loaders.humanml.networks.trainers import TextMotionMatchTrainer
-from data_loaders.humanml.data.dataset import Text2MotionDatasetV2, collate_fn, BABEL_Text2MotionDatasetV2
-from data_loaders.humanml.scripts.motion_process import *
+from .networks.modules import *
+from .networks.trainers import TextMotionMatchTrainer
+from .data.dataset import Text2MotionDatasetV2, collate_fn, BABEL_Text2MotionDatasetV2
+from .scripts.motion_process import *
 from torch.utils.data import DataLoader
-from data_loaders.humanml.utils.word_vectorizer import WordVectorizer, POS_enumerator
+from .utils.word_vectorizer import WordVectorizer, POS_enumerator
 from copy import deepcopy
 from  data_loaders.humanml import collect_babel_stats
 

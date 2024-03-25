@@ -1,10 +1,10 @@
 import torch
 import torch.nn as nn
-from model.rotation2xyz import Rotation2xyz
+from .rotation2xyz import Rotation2xyz
 
-from model.mdm import MDM
-from model.mdm import InputProcess
-from model.mdm import PositionalEncoding
+from .mdm import MDM
+from .mdm import InputProcess
+from .mdm import PositionalEncoding
 
 class doubleTake_MDM(MDM):
     # def __init__(self, **kargs):

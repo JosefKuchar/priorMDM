@@ -14,10 +14,10 @@ import torch
 import torch as th
 from copy import deepcopy
 
-from data_loaders.amass.transforms.smpl import SlimSMPLTransform
-from diffusion.nn import mean_flat, sum_flat
-from diffusion.losses import normal_kl, discretized_gaussian_log_likelihood
-from data_loaders.humanml.scripts import motion_process
+from priorMDM.data_loaders.amass.transforms.smpl import SlimSMPLTransform
+from .nn import mean_flat, sum_flat
+from .losses import normal_kl, discretized_gaussian_log_likelihood
+from priorMDM.data_loaders.humanml.scripts import motion_process
 
 def get_named_beta_schedule(schedule_name, num_diffusion_timesteps, scale_betas=1.):
     """
@@ -327,7 +327,7 @@ class GaussianDiffusion:
             inpainting_mask, inpainted_motion = model_kwargs['y']['inpainting_mask'], model_kwargs['y']['inpainted_motion']
             assert self.model_mean_type == ModelMeanType.START_X, 'This feature supports only X_start pred for mow!'
             assert model_output.shape == inpainting_mask.shape == inpainted_motion.shape
-            
+
             # inpainting_mask supports both boolean and scalar values
             ones = torch.ones_like(inpainting_mask, dtype=torch.float, device=inpainting_mask.device)
             inpainting_mask = ones * inpainting_mask

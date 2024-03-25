@@ -1,14 +1,14 @@
 import itertools
 
 import torch
-from data_loaders.humanml.networks.modules import *
-from data_loaders.humanml.networks.trainers import CompTrainerV6
+from ..networks.modules import *
+from ..networks.trainers import CompTrainerV6
 from torch.utils.data import Dataset, DataLoader
 from os.path import join as pjoin
 from tqdm import tqdm
-from data_loaders.humanml_utils import get_inpainting_mask
+from ...humanml_utils import get_inpainting_mask
 
-from utils.sampling_utils import double_take_arb_len, unfold_sample_arb_len
+from ....utils.sampling_utils import double_take_arb_len, unfold_sample_arb_len
 from utils import dist_util
 
 def build_models(opt):

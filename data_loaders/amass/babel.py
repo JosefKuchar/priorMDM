@@ -535,7 +535,7 @@ class BABEL(Dataset):
                         num_bad_actions += 1
                         continue
 
-                from data_loaders.amass.tools.smpl import smpl_data_to_matrix_and_trans
+                from .tools.smpl import smpl_data_to_matrix_and_trans
                 # here we take smpl data in poses/trans and move to rots/trans
                 if self.sep_to_4:
                     if frames_0_valid:

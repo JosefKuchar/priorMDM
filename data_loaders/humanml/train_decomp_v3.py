@@ -6,17 +6,17 @@ from os.path import join as pjoin
 import data_loaders.humanml.utils.paramUtil as paramUtil
 from data_loaders.amass.sampling import FrameSampler
 from data_loaders.amass.transforms import SMPLTransform
-from data_loaders.get_data import get_dataset_loader
+from ..get_data import get_dataset_loader
 from data_loaders.humanml import collect_babel_stats
-from data_loaders.humanml.options.train_options import TrainDecompOptions
-from data_loaders.humanml.utils.plot_script import *
+from .options.train_options import TrainDecompOptions
+from .utils.plot_script import *
 
-from data_loaders.humanml.networks.modules import *
-from data_loaders.humanml.networks.trainers import DecompTrainerV3
-from data_loaders.humanml.data.dataset import MotionDatasetV2, BABEL_MotionDatasetV2
-from data_loaders.humanml.scripts.motion_process import *
+from .networks.modules import *
+from .networks.trainers import DecompTrainerV3
+from .data.dataset import MotionDatasetV2, BABEL_MotionDatasetV2
+from .scripts.motion_process import *
 from torch.utils.data import DataLoader
-from data_loaders.humanml.utils.word_vectorizer import WordVectorizer, POS_enumerator
+from .utils.word_vectorizer import WordVectorizer, POS_enumerator
 
 
 def plot_t2m(data, save_dir):

@@ -4,18 +4,18 @@ Train a diffusion model on images.
 """
 import os
 import json
-from diffusion.respace import SpacedDiffusion
-from utils.fixseed import fixseed
-from utils.parser_util import train_inpainting_args
+from ..diffusion.respace import SpacedDiffusion
+from ..utils.fixseed import fixseed
+from ..utils.parser_util import train_inpainting_args
 from utils import dist_util
-from train.training_loop import TrainLoop
-from data_loaders.get_data import get_dataset_loader
-from utils.model_util import create_model_and_diffusion
-from train.train_platforms import ClearmlPlatform, TensorboardPlatform, NoPlatform  # required for the eval operation
+from .training_loop import TrainLoop
+from ..data_loaders.get_data import get_dataset_loader
+from ..utils.model_util import create_model_and_diffusion
+from .train_platforms import ClearmlPlatform, TensorboardPlatform, NoPlatform  # required for the eval operation
 import torch
-from data_loaders.humanml_utils import get_inpainting_mask
+from ..data_loaders.humanml_utils import get_inpainting_mask
 from torch.utils.data import DataLoader
-from diffusion.inpainting_gaussian_diffusion import InpaintingGaussianDiffusion
+from ..diffusion.inpainting_gaussian_diffusion import InpaintingGaussianDiffusion
 
 def main():
     args = train_inpainting_args()

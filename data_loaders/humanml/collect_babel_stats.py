@@ -1,4 +1,4 @@
-from data_loaders.get_data import get_dataset_loader
+from ..get_data import get_dataset_loader
 import numpy as np
 from tqdm import tqdm
 import os

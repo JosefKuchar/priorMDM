@@ -5,14 +5,14 @@ Train a diffusion model on images.
 
 import os
 import json
-from model.comMDM import ComMDM
-from utils.fixseed import fixseed
-from utils.parser_util import train_multi_args
+from ..model.comMDM import ComMDM
+from ..utils.fixseed import fixseed
+from ..utils.parser_util import train_multi_args
 from utils import dist_util
-from train.training_loop import TrainLoop
-from data_loaders.get_data import get_dataset_loader
-from utils.model_util import create_model_and_diffusion, load_model_wo_clip, load_pretrained_mdm, load_split_mdm
-from train.train_platforms import ClearmlPlatform, TensorboardPlatform, NoPlatform  # required for the eval operation
+from .training_loop import TrainLoop
+from ..data_loaders.get_data import get_dataset_loader
+from ..utils.model_util import create_model_and_diffusion, load_model_wo_clip, load_pretrained_mdm, load_split_mdm
+from .train_platforms import ClearmlPlatform, TensorboardPlatform, NoPlatform  # required for the eval operation
 import torch
 
 def main():

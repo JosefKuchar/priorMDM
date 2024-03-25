@@ -4,19 +4,19 @@ Generate a large batch of image samples from a model and save them as a large
 numpy array. This can be used to produce samples for FID evaluation.
 """
 from data_loaders import humanml_utils
-from eval.eval_multi import extract_motions
-from model.comMDM import ComMDM
-from utils.fixseed import fixseed
+from ..eval.eval_multi import extract_motions
+from ..model.comMDM import ComMDM
+from ..utils.fixseed import fixseed
 import os
 import numpy as np
 import torch
-from utils.parser_util import edit_multi_args
-from utils.model_util import load_model
+from ..utils.parser_util import edit_multi_args
+from ..utils.model_util import load_model
 from utils import dist_util
-from model.cfg_sampler import UnconditionedModel
-from data_loaders.get_data import get_dataset_loader
+from ..model.cfg_sampler import UnconditionedModel
+from ..data_loaders.get_data import get_dataset_loader
 import data_loaders.humanml.utils.paramUtil as paramUtil
-from data_loaders.humanml.utils.plot_script import plot_3d_motion
+from ..data_loaders.humanml.utils.plot_script import plot_3d_motion
 import shutil
 
 

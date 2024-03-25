@@ -28,7 +28,7 @@ import torch.nn.functional as F
 
 # Get the indexes of particular body part
 # Feet
-from data_loaders.amass.info.joints import mmm_joints
+from ...info.joints import mmm_joints
 
 LM, RM = mmm_joints.index("LMrot"), mmm_joints.index("RMrot")
 LF, RF = mmm_joints.index("LF"), mmm_joints.index("RF")

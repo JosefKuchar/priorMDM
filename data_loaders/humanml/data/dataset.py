@@ -2,7 +2,7 @@ import torch
 from torch.utils import data
 import numpy as np
 import os
-from os.path import join as pjoin
+from os.path import join as pjoin, dirname
 import random
 import codecs as cs
 from tqdm import tqdm
@@ -10,11 +10,10 @@ import spacy
 import itertools
 
 from torch.utils.data._utils.collate import default_collate
-from data_loaders.amass.sampling import FrameSampler
-from data_loaders.humanml.utils.word_vectorizer import WordVectorizer
-from data_loaders.humanml.utils.get_opt import get_opt
+from ..utils.word_vectorizer import WordVectorizer
+from ..utils.get_opt import get_opt
 
-from data_loaders.amass.babel import BABEL
+from ...amass.babel import BABEL
 
 
 MOTION_TYPES = [
@@ -393,7 +392,6 @@ class Text2MotionDatasetV2(data.Dataset):
         return word_embeddings, pos_one_hots, caption, sent_len, motion, m_length, '_'.join(tokens), []
 
 
-
 '''For use of training text motion matching model, and evaluations'''
 class PW3D_Text2MotionDatasetV2(data.Dataset):
     def __init__(self, opt, mean, std, splits, w_vectorizer, **kwargs):
@@ -422,7 +420,7 @@ class PW3D_Text2MotionDatasetV2(data.Dataset):
                 return np.concatenate((_canon, np.zeros(self.opt.dim_pose-len(self.canon_relevant_entries))))
             canon0 = get_canon(name0)
             canon1 = get_canon(name1)
-            if not 'test' in splits:  # test is not yet annotated
+            if 'test' not in splits:  # test is not yet annotated
                 with open(name0.replace('new_joint_vecs', 'text').replace('p0_M', 'p0').replace('.npy', '.txt'), 'r') as fr:
                     texts = [t.strip() for t in fr.readlines()]
             else:
@@ -1057,13 +1055,13 @@ class TextOnlyDataset(data.Dataset):
 class HumanML3D(data.Dataset):
     def __init__(self, load_mode, datapath='./dataset/humanml_opt.txt', split="train", **kwargs):
         self.load_mode = load_mode
-        
+
         self.dataset_name = 't2m'
         self.dataname = 't2m'
         self.split = split
 
         # Configurations of T2M dataset and KIT dataset is almost the same
-        abs_base_path = f'.'
+        abs_base_path = pjoin(dirname(__file__), '../../..')
         dataset_opt_path = pjoin(abs_base_path, datapath)
         device = None  # torch.device('cuda:4') # This param is not in use in this context
         opt = get_opt(dataset_opt_path, device)
@@ -1136,7 +1134,7 @@ class BABEL_eval(data.Dataset):
 
         self.split = split
         self.datapath = datapath
-        abs_base_path = f'.'
+        abs_base_path = '.'
 
         if opt is None:
             self.opt_path = './dataset/humanml_opt.txt'

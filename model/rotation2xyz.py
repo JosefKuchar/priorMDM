@@ -1,32 +1,52 @@
 # This code is based on https://github.com/Mathux/ACTOR.git
 import torch
-import utils.rotation_conversions as geometry
-from data_loaders.amass.transforms.rots2joints import SMPLH
+import priorMDM.utils.rotation_conversions as geometry
+from priorMDM.data_loaders.amass.transforms.rots2joints import SMPLH
 
-from model.smpl import SMPL, JOINTSTYPE_ROOT
+from .smpl import SMPL, JOINTSTYPE_ROOT
+
 JOINTSTYPES = ["a2m", "a2mpl", "smpl", "vibe", "vertices"]
 
 
 class Rotation2xyz:
-    def __init__(self, device, dataset='amass', batch_size=None):
+    def __init__(self, device, dataset="amass", batch_size=None):
         self.device = device
         self.dataset = dataset
-        if dataset == 'babel':
-            self.smpl_model = SMPLH(path='./body_models/smpl_models/smplh',
-                                                  jointstype='smplnh',
-                                                  input_pose_rep='matrix',
-                                                  batch_size=batch_size,
-                                                  gender='male',
-                                                  name='SMPLH').eval().to(device)
+        if dataset == "babel":
+            self.smpl_model = (
+                SMPLH(
+                    path="./body_models/smpl_models/smplh",
+                    jointstype="smplnh",
+                    input_pose_rep="matrix",
+                    batch_size=batch_size,
+                    gender="male",
+                    name="SMPLH",
+                )
+                .eval()
+                .to(device)
+            )
 
         else:
             self.smpl_model = SMPL().eval().to(device)
 
-    def __call__(self, x, mask, pose_rep, translation, glob,
-                 jointstype, vertstrans, betas=None, beta=0,
-                 glob_rot=None, get_rotations_back=False, data_type=None, **kwargs):
+    def __call__(
+        self,
+        x,
+        mask,
+        pose_rep,
+        translation,
+        glob,
+        jointstype,
+        vertstrans,
+        betas=None,
+        beta=0,
+        glob_rot=None,
+        get_rotations_back=False,
+        data_type=None,
+        **kwargs
+    ):
 
-        if self.dataset == 'babel':
+        if self.dataset == "babel":
             out = self.smpl_model(smpl_data=x, batch_size=1)
             return out
         if pose_rep == "xyz":
@@ -64,26 +84,40 @@ class Rotation2xyz:
 
         if not glob:
             global_orient = torch.tensor(glob_rot, device=x.device)
-            global_orient = geometry.axis_angle_to_matrix(global_orient).view(1, 1, 3, 3)
+            global_orient = geometry.axis_angle_to_matrix(global_orient).view(
+                1, 1, 3, 3
+            )
             global_orient = global_orient.repeat(len(rotations), 1, 1, 1)
         else:
             global_orient = rotations[:, 0]
             rotations = rotations[:, 1:]
 
         if betas is None:
-            betas = torch.zeros([rotations.shape[0], self.smpl_model.num_betas],
-                                dtype=rotations.dtype, device=rotations.device)
+            betas = torch.zeros(
+                [rotations.shape[0], self.smpl_model.num_betas],
+                dtype=rotations.dtype,
+                device=rotations.device,
+            )
             betas[:, 1] = beta
             # import ipdb; ipdb.set_trace()
-        if self.dataset == 'babel':
-            out = self.smpl_model(body_pose=rotations, global_orient=global_orient, betas=betas, input_pose_rep='rot6d')
+        if self.dataset == "babel":
+            out = self.smpl_model(
+                body_pose=rotations,
+                global_orient=global_orient,
+                betas=betas,
+                input_pose_rep="rot6d",
+            )
         else:
-            out = self.smpl_model(body_pose=rotations, global_orient=global_orient, betas=betas)
+            out = self.smpl_model(
+                body_pose=rotations, global_orient=global_orient, betas=betas
+            )
 
         # get the desirable joints
         joints = out[jointstype]
 
-        x_xyz = torch.empty(nsamples, time, joints.shape[1], 3, device=x.device, dtype=x.dtype)
+        x_xyz = torch.empty(
+            nsamples, time, joints.shape[1], 3, device=x.device, dtype=x.dtype
+        )
         x_xyz[~mask] = 0
         x_xyz[mask] = joints
 

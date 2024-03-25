@@ -14,7 +14,7 @@
 #
 # Contact: ps-license@tuebingen.mpg.de
 
-from data_loaders.amass.tools_teach import geometry
+from priorMDM.data_loaders.amass.tools_teach import geometry
 
 
 def nfeats_of(rottype):

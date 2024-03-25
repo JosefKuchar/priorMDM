@@ -17,7 +17,7 @@
 import joblib
 import sys
 
-from data_loaders.amass.file_io import read_json
+from .file_io import read_json
 
 sys.path.append('.')
 

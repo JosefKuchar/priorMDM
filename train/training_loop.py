@@ -11,14 +11,14 @@ from torch.optim import AdamW
 
 from diffusion import logger
 from utils import dist_util
-from diffusion.fp16_util import MixedPrecisionTrainer
-from diffusion.resample import LossAwareSampler, UniformSampler
+from ..diffusion.fp16_util import MixedPrecisionTrainer
+from ..diffusion.resample import LossAwareSampler, UniformSampler
 from tqdm import tqdm
-from diffusion.resample import create_named_schedule_sampler
-from data_loaders.humanml.networks.evaluator_wrapper import EvaluatorMDMWrapper
+from ..diffusion.resample import create_named_schedule_sampler
+from ..data_loaders.humanml.networks.evaluator_wrapper import EvaluatorMDMWrapper
 from eval import eval_humanml_double_take, eval_multi
-from data_loaders.get_data import get_dataset_loader
-from utils.misc import load_model_wo_clip
+from ..data_loaders.get_data import get_dataset_loader
+from ..utils.misc import load_model_wo_clip
 
 
 # For ImageNet experiments, this was a good default value.

@@ -3,21 +3,21 @@
 Generate a large batch of image samples from a model and save them as a large
 numpy array. This can be used to produce samples for FID evaluation.
 """
-from model.comMDM import ComMDM
-from utils.fixseed import fixseed
+from ..model.comMDM import ComMDM
+from ..utils.fixseed import fixseed
 import os
 import numpy as np
 import torch
-from utils.parser_util import generate_multi_args
-from utils.model_util import create_model_and_diffusion, load_model
+from ..utils.parser_util import generate_multi_args
+from ..utils.model_util import create_model_and_diffusion, load_model
 from utils import dist_util
-from model.cfg_sampler import ClassifierFreeSampleModel
-from data_loaders.get_data import get_dataset_loader
-from data_loaders.humanml.scripts.motion_process import recover_from_ric
+from ..model.cfg_sampler import ClassifierFreeSampleModel
+from ..data_loaders.get_data import get_dataset_loader
+from ..data_loaders.humanml.scripts.motion_process import recover_from_ric
 import data_loaders.humanml.utils.paramUtil as paramUtil
-from data_loaders.humanml.utils.plot_script import plot_3d_motion
+from ..data_loaders.humanml.utils.plot_script import plot_3d_motion
 import shutil
-from data_loaders.tensors import collate
+from ..data_loaders.tensors import collate
 import utils.rotation_conversions as geometry
 
 

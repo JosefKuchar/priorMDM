@@ -1,20 +1,20 @@
-from model.DoubleTake_MDM import doubleTake_MDM
-from model.mdm import MDM
-from utils.parser_util import evaluation_double_take_parser
-from utils.fixseed import fixseed
+from ..model.DoubleTake_MDM import doubleTake_MDM
+from ..model.mdm import MDM
+from ..utils.parser_util import evaluation_double_take_parser
+from ..utils.fixseed import fixseed
 from datetime import datetime
-from data_loaders.humanml.motion_loaders.model_motion_loaders import get_mdm_loader  # get_motion_loader
-from data_loaders.humanml.utils.metrics import *
-from data_loaders.humanml.networks.evaluator_wrapper import EvaluatorMDMWrapper
+from ..data_loaders.humanml.motion_loaders.model_motion_loaders import get_mdm_loader  # get_motion_loader
+from ..data_loaders.humanml.utils.metrics import *
+from ..data_loaders.humanml.networks.evaluator_wrapper import EvaluatorMDMWrapper
 from collections import OrderedDict
-from data_loaders.humanml.scripts.motion_process import *
-from data_loaders.humanml.utils.utils import *
-from utils.model_util import load_model
+from ..data_loaders.humanml.scripts.motion_process import *
+from ..data_loaders.humanml.utils.utils import *
+from ..utils.model_util import load_model
 
 from diffusion import logger
 from utils import dist_util
-from data_loaders.get_data import get_dataset_loader
-from model.cfg_sampler import ClassifierFreeSampleModel
+from ..data_loaders.get_data import get_dataset_loader
+from ..model.cfg_sampler import ClassifierFreeSampleModel
 
 torch.multiprocessing.set_sharing_strategy('file_system')
 

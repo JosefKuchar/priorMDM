@@ -129,3 +129,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Datasets and results
+/t2m
+/save
+/kit
+/glove
+/body_models/smpl
+/dataset

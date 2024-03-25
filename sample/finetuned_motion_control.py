@@ -3,22 +3,22 @@
 Generate a large batch of image samples from a model and save them as a large
 numpy array. This can be used to produce samples for FID evaluation.
 """
-from diffusion.inpainting_gaussian_diffusion import InpaintingGaussianDiffusion
-from diffusion.respace import SpacedDiffusion
-from model.model_blending import ModelBlender
-from utils.fixseed import fixseed
+from ..diffusion.inpainting_gaussian_diffusion import InpaintingGaussianDiffusion
+from ..diffusion.respace import SpacedDiffusion
+from ..model.model_blending import ModelBlender
+from ..utils.fixseed import fixseed
 import os
 import numpy as np
 import torch
-from utils.parser_util import edit_inpainting_args
-from utils.model_util import load_model_blending_and_diffusion
+from ..utils.parser_util import edit_inpainting_args
+from ..utils.model_util import load_model_blending_and_diffusion
 from utils import dist_util
-from model.cfg_sampler import wrap_model
-from data_loaders.get_data import get_dataset_loader
-from data_loaders.humanml.scripts.motion_process import recover_from_ric
-from data_loaders.humanml_utils import get_inpainting_mask
+from ..model.cfg_sampler import wrap_model
+from ..data_loaders.get_data import get_dataset_loader
+from ..data_loaders.humanml.scripts.motion_process import recover_from_ric
+from ..data_loaders.humanml_utils import get_inpainting_mask
 import data_loaders.humanml.utils.paramUtil as paramUtil
-from data_loaders.humanml.utils.plot_script import plot_3d_motion
+from ..data_loaders.humanml.utils.plot_script import plot_3d_motion
 import shutil
 
 def main():

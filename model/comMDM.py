@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from model.mdm import MDM
+from .mdm import MDM
 
 class ComMDM(MDM):
 

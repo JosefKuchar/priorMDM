@@ -1,8 +1,8 @@
 from torch.utils.data import DataLoader, Dataset
-from data_loaders.humanml.utils.get_opt import get_opt
-from data_loaders.humanml.motion_loaders.comp_v6_model_dataset import CompMDMGeneratedDataset, CompMDMInpaintingGeneratedDataset, \
+from ..utils.get_opt import get_opt
+from .comp_v6_model_dataset import CompMDMGeneratedDataset, CompMDMInpaintingGeneratedDataset, \
     CompMDMUnfoldingGeneratedDataset
-from data_loaders.humanml.utils.word_vectorizer import WordVectorizer
+from ..utils.word_vectorizer import WordVectorizer
 import numpy as np
 from torch.utils.data._utils.collate import default_collate
 

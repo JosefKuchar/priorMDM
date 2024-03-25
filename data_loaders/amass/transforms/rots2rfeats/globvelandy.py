@@ -119,5 +119,5 @@ class Globalvelandy(Rots2Rfeats):
         matrix_poses = to_matrix(self.pose_rep, poses)
 
         # from teach.transforms.smpl import RotTransDatastruct
-        from data_loaders.amass.transforms.smpl import RotTransDatastruct
+        from ..smpl import RotTransDatastruct
         return RotTransDatastruct(rots=matrix_poses, trans=trans)

@@ -1,12 +1,10 @@
-import random
 import torch
-from data_loaders.amass.tools import collate_tensor_with_padding
 
 def lengths_to_mask(lengths, max_len):
     # max_len = max(lengths)
     mask = torch.arange(max_len, device=lengths.device).expand(len(lengths), max_len) < lengths.unsqueeze(1)
     return mask
-    
+
 
 def collate_tensors(batch):
     dims = batch[0].dim()
