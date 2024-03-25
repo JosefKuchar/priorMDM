@@ -8,6 +8,7 @@ import codecs as cs
 from tqdm import tqdm
 import spacy
 import itertools
+import logging
 
 from torch.utils.data._utils.collate import default_collate
 from ..utils.word_vectorizer import WordVectorizer
@@ -15,6 +16,7 @@ from ..utils.get_opt import get_opt
 
 from ...amass.babel import BABEL
 
+logger = logging.getLogger(__name__)
 
 MOTION_TYPES = [
     '_0',
@@ -135,7 +137,7 @@ class Text2MotionDataset(data.Dataset):
     def reset_max_len(self, length):
         assert length <= self.opt.max_motion_length
         self.pointer = np.searchsorted(self.length_arr, length)
-        print("Pointer Pointing at %d"%self.pointer)
+        logger.debug("Pointer Pointing at %d"%self.pointer)
         self.max_length = length
 
     def inv_transform(self, data):
@@ -330,7 +332,7 @@ class Text2MotionDatasetV2(data.Dataset):
     def reset_max_len(self, length):
         assert length <= self.max_motion_length
         self.pointer = np.searchsorted(self.length_arr, length)
-        print("Pointer Pointing at %d"%self.pointer)
+        logger.debug("Pointer Pointing at %d"%self.pointer)
         self.max_length = length
 
     def inv_transform(self, data):
@@ -463,7 +465,7 @@ class PW3D_Text2MotionDatasetV2(data.Dataset):
     def reset_max_len(self, length):
         assert length <= self.max_motion_length
         self.pointer = np.searchsorted(self.length_arr, length)
-        print("Pointer Pointing at %d"%self.pointer)
+        logger.debug("Pointer Pointing at %d"%self.pointer)
         self.max_length = length
 
     def rebuilt_canon(self, canon_pred):
@@ -728,7 +730,7 @@ class Text2MotionDatasetBaseline(data.Dataset):
     def reset_max_len(self, length):
         assert length <= self.max_motion_length
         self.pointer = np.searchsorted(self.length_arr, length)
-        print("Pointer Pointing at %d"%self.pointer)
+        logger.debug("Pointer Pointing at %d"%self.pointer)
         self.max_length = length
 
     def inv_transform(self, data):
@@ -853,7 +855,7 @@ class MotionDatasetV2(data.Dataset):
 
         self.mean = mean
         self.std = std
-        print("Total number of motions {}, snippets {}".format(len(self.data), self.cumsum[-1]))
+        logger.info("Total number of motions {}, snippets {}".format(len(self.data), self.cumsum[-1]))
 
     def inv_transform(self, data):
         return data * self.std + self.mean
@@ -1075,7 +1077,7 @@ class HumanML3D(data.Dataset):
         opt.meta_dir = './dataset'
         opt.load_mode = load_mode
         self.opt = opt
-        print('Loading dataset %s ...' % opt.dataset_name)
+        logger.info('Loading dataset %s ...' % opt.dataset_name)
 
         if load_mode == 'gt':
             # used by T2M models (including evaluators)
@@ -1160,7 +1162,7 @@ class BABEL_eval(data.Dataset):
             opt.max_motion_length = sampler.max_len
         self.opt = opt
 
-        print('Loading dataset %s ...' % opt.dataset_name)
+        logger.info('Loading dataset %s ...' % opt.dataset_name)
 
         self.dataset_name = opt.dataset_name
         self.dataname = opt.dataset_name

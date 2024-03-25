@@ -1,11 +1,11 @@
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import clip
 from .rotation2xyz import Rotation2xyz
+import logging
 
-
+logger = logging.getLogger(__name__)
 
 class MDM(nn.Module):
     def __init__(self, modeltype, njoints, nfeats, num_actions, translation, pose_rep, glob, glob_rot,
@@ -53,7 +53,7 @@ class MDM(nn.Module):
         self.emb_trans_dec = emb_trans_dec
 
         if self.arch == 'trans_enc':
-            print("TRANS_ENC init")
+            logger.debug("TRANS_ENC init")
             seqTransEncoderLayer = nn.TransformerEncoderLayer(d_model=self.latent_dim,
                                                               nhead=self.num_heads,
                                                               dim_feedforward=self.ff_size,
@@ -63,7 +63,7 @@ class MDM(nn.Module):
             self.seqTransEncoder = nn.TransformerEncoder(seqTransEncoderLayer,
                                                          num_layers=self.num_layers)
         elif self.arch == 'trans_dec':
-            print("TRANS_DEC init")
+            logger.debug("TRANS_DEC init")
             seqTransDecoderLayer = nn.TransformerDecoderLayer(d_model=self.latent_dim,
                                                               nhead=self.num_heads,
                                                               dim_feedforward=self.ff_size,
@@ -72,7 +72,7 @@ class MDM(nn.Module):
             self.seqTransDecoder = nn.TransformerDecoder(seqTransDecoderLayer,
                                                          num_layers=self.num_layers)
         elif self.arch == 'gru':
-            print("GRU init")
+            logger.debug("GRU init")
             self.gru = nn.GRU(self.latent_dim, self.latent_dim, num_layers=self.num_layers, batch_first=True)
         else:
             raise ValueError('Please choose correct architecture [trans_enc, trans_dec, gru]')
@@ -82,13 +82,13 @@ class MDM(nn.Module):
         if self.cond_mode != 'no_cond':
             if 'text' in self.cond_mode:
                 self.embed_text = nn.Linear(self.clip_dim, self.latent_dim)
-                print('EMBED TEXT')
-                print('Loading CLIP...')
+                logger.debug("EMBED TEXT")
+                logger.info('Loading CLIP...')
                 self.clip_version = clip_version
                 self.clip_model = self.load_and_freeze_clip(clip_version)
             if 'action' in self.cond_mode:
                 self.embed_action = EmbedAction(self.num_actions, self.latent_dim)
-                print('EMBED ACTION')
+                logger.debug("EMBED ACTION")
 
         self.output_process = OutputProcess(self.data_rep, self.input_feats, self.latent_dim, self.njoints,
                                             self.nfeats)
@@ -187,11 +187,9 @@ class MDM(nn.Module):
         output = self.output_process(output)  # [bs, njoints, nfeats, nframes]
         return output
 
-
     def _apply(self, fn):
         super()._apply(fn)
         self.rot2xyz.smpl_model._apply(fn)
-
 
     def train(self, *args, **kwargs):
         super().train(*args, **kwargs)

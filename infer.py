@@ -12,6 +12,7 @@ from priorMDM.utils import dist_util
 from priorMDM.data_loaders.get_data import get_dataset_loader
 from priorMDM.data_loaders.humanml.scripts.motion_process import recover_from_ric
 from priorMDM.utils.sampling_utils import unfold_sample_arb_len, double_take_arb_len
+import logging
 
 import sys
 
@@ -78,9 +79,11 @@ config = {
     "sigma_small": True,
 }
 
+logger = logging.getLogger(__name__)
+
 
 def main(texts=[]):
-    print("generating samples")
+    logger.info("PriorMDM DoubleTake inference")
     args = dotdict(config)
     fixseed(args.seed)
     n_frames = 150
@@ -90,11 +93,11 @@ def main(texts=[]):
         args.num_samples
     )  # Sampling a single batch from the testset, with exactly args.num_samples
 
-    print("Loading dataset...")
+    logger.info("Loading dataset")
     data = load_dataset(args, n_frames)
     total_num_samples = args.num_samples * args.num_repetitions
 
-    print("Creating model and diffusion...")
+    logger.info("Creating model and diffusion")
     model, diffusion = load_model(
         args, data, dist_util.dev(), ModelClass=doubleTake_MDM
     )
@@ -118,7 +121,7 @@ def main(texts=[]):
     all_captions = []
 
     for rep_i in range(args.num_repetitions):
-        print(f"### Sampling [repetitions #{rep_i}]")
+        logger.info("Sampling")
         if args.guidance_param != 1:
             model_kwargs["y"]["scale"] = (
                 torch.ones(args.batch_size, device=dist_util.dev())
@@ -221,7 +224,7 @@ def main(texts=[]):
             all_motions.append(sample.cpu().numpy())
             all_lengths.append(model_kwargs["y"]["lengths"].cpu().numpy())
 
-            print(f"created {len(all_motions) * args.batch_size} samples")
+            logger.info(f"Created {len(all_motions) * args.batch_size} samples")
 
     n_frames = final_n_frames
     num_repetitions = args.num_repetitions
@@ -256,7 +259,3 @@ def load_dataset(args, n_frames):
     )
     data.fixed_length = n_frames
     return data
-
-
-if __name__ == "__main__":
-    main(["a person walking", "a person sitting"])

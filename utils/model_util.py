@@ -5,6 +5,10 @@ from priorMDM.diffusion import gaussian_diffusion as gd
 from priorMDM.diffusion.respace import SpacedDiffusion, space_timesteps
 from priorMDM.model.model_blending import ModelBlender
 from os.path import join, dirname
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def load_model_blending_and_diffusion(
     args_list, data, device, ModelClass=MDM, DiffusionClass=gd.GaussianDiffusion
@@ -24,8 +28,8 @@ def load_model_blending_and_diffusion(
 
 def load_model(args, data, device, ModelClass=MDM):
     model, diffusion = create_model_and_diffusion(args, data, ModelClass=ModelClass)
-    model_path = join(dirname(__file__), '..', args.model_path)
-    print(f"Loading checkpoints from [{model_path}]...")
+    model_path = join(dirname(__file__), "..", args.model_path)
+    logger.info(f"Loading checkpoints from [{model_path}]...")
     state_dict = torch.load(model_path, map_location="cpu")
     load_model_wo_clip(model, state_dict)
     model.to(device)
@@ -160,7 +164,7 @@ def create_gaussian_diffusion(args, DiffusionClass=SpacedDiffusion):
     learn_sigma = False
     rescale_timesteps = False
 
-    print(f"number of diffusion-steps: {steps}")
+    logger.info(f"Number of diffusion-steps: {steps}")
 
     betas = gd.get_named_beta_schedule(args.noise_schedule, steps, scale_beta)
     loss_type = gd.LossType.MSE
