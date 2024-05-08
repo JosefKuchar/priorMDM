@@ -687,10 +687,7 @@ class GaussianDiffusion:
                 for sample_i, len in zip(range(1, sample['sample'].shape[0]), model_kwargs['y']['lengths']):
                     _suffix = sample['sample'][sample_i - 1, :, :, -unfolding_handshake + len:len]
                     _prefix = sample['sample'][sample_i, :, :, :unfolding_handshake]
-                    try:
-                        _blend = (_suffix * (1 - alpha) + _prefix * alpha)
-                    except(RuntimeError):
-                        print("Error")
+                    _blend = (_suffix * (1 - alpha) + _prefix * alpha)
                     sample['sample'][sample_i - 1, :, :, -unfolding_handshake + len:len] = _blend
                     sample['sample'][sample_i, :, :, :unfolding_handshake] = _blend
             elif ((unfolding_handshake > 0) and not (second_take_only)):

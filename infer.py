@@ -13,6 +13,7 @@ from priorMDM.data_loaders.get_data import get_dataset_loader
 from priorMDM.data_loaders.humanml.scripts.motion_process import recover_from_ric
 from priorMDM.utils.sampling_utils import unfold_sample_arb_len, double_take_arb_len
 import logging
+from os.path import join, dirname
 
 import sys
 
@@ -82,36 +83,45 @@ config = {
 logger = logging.getLogger(__name__)
 
 
-def main(texts=[]):
+def generate_motion(prompts: list[tuple[str, int]] = [], seed=None):
+    """
+    Generate motion from a text prompt using the PriorMDM technique
+    Based on sample/double_take.py from https://github.com/priorMDM/priorMDM/blob/main/sample/double_take.py
+
+    :param prompts: A list of tuples containing the text prompt and length of the motion to generate
+    :param seed: Seed to use for random number generation
+
+    :return: A dictionary containing the generated motion, text, lengths, number of samples and number of repetitions
+    """
+
     logger.info("PriorMDM DoubleTake inference")
+    prompt_count = len(prompts)
+    if prompt_count == 1:
+        # We need to repeat the prompt otherwise the double take won't work
+        prompts = prompts * 2
     args = dotdict(config)
-    fixseed(args.seed)
+    if seed:
+        fixseed(seed)
     n_frames = 150
     dist_util.setup_dist(args.device)
-    args.num_samples = len(texts)
+    args.num_samples = len(prompts)
     args.batch_size = (
         args.num_samples
     )  # Sampling a single batch from the testset, with exactly args.num_samples
-
-    logger.info("Loading dataset")
-    data = load_dataset(args, n_frames)
     total_num_samples = args.num_samples * args.num_repetitions
 
     logger.info("Creating model and diffusion")
-    model, diffusion = load_model(
-        args, data, dist_util.dev(), ModelClass=doubleTake_MDM
-    )
+    model, diffusion = load_model(args, dist_util.dev(), ModelClass=doubleTake_MDM)
 
     model_kwargs = {
         "y": {
             "mask": torch.ones(
-                (len(texts), 1, 1, 196)
+                (args.num_samples, 1, 1, 196)
             ),  # 196 is humanml max frames number
-            # TODO: This can be variable
-            "lengths": torch.tensor([n_frames] * len(texts)),
-            "text": texts,
+            "lengths": torch.tensor([prompt[1] for prompt in prompts]),
+            "text": [prompt[0] for prompt in prompts],
             "tokens": [""],
-            "scale": torch.ones(len(texts)) * 2.5,
+            "scale": torch.ones(args.num_samples) * 2.5,
         }
     }
 
@@ -133,13 +143,6 @@ def main(texts=[]):
         }
 
         max_arb_len = model_kwargs["y"]["lengths"].max()
-        min_arb_len = 2 * args.handshake_size + 2 * args.blend_len + 10
-
-        for ii, len_s in enumerate(model_kwargs["y"]["lengths"]):
-            if len_s > max_arb_len:
-                model_kwargs["y"]["lengths"][ii] = max_arb_len
-            if len_s < min_arb_len:
-                model_kwargs["y"]["lengths"][ii] = min_arb_len
         samples_per_rep_list, samples_type = double_take_arb_len(
             args, diffusion, model, model_kwargs, max_arb_len
         )
@@ -162,9 +165,7 @@ def main(texts=[]):
             # Recover XYZ *positions* from HumanML3D vector representation
             if model.data_rep == "hml_vec":
                 n_joints = 22 if sample.shape[1] == 263 else 21
-                sample = data.dataset.t2m_dataset.inv_transform(
-                    sample.cpu().permute(0, 2, 3, 1)
-                ).float()
+                sample = inv_transform(sample.cpu().permute(0, 2, 3, 1)).float()
                 sample = recover_from_ric(sample, n_joints)
                 sample = sample.view(-1, *sample.shape[2:]).permute(0, 2, 3, 1)
             if args.dataset == "babel":
@@ -234,13 +235,25 @@ def main(texts=[]):
     all_text = all_text[:total_num_samples]
     all_lengths = [n_frames] * num_repetitions
 
+    # If we only have one prompt, we only want the first half of the data
+    if prompt_count == 1:
+        all_motions = all_motions[:, :, :, : step_sizes[0]]
+        all_text = all_text[:1]
+        step_sizes = step_sizes[:1]
+
     return {
         "motion": all_motions,
         "text": all_text,
-        "lengths": all_lengths,
+        "lengths": step_sizes,
         "num_samples": args.num_samples,
         "num_repetitions": num_repetitions,
     }
+
+
+def inv_transform(data):
+    mean = np.load(join(dirname(__file__), "dataset/HumanML3D", "Mean.npy"))
+    std = np.load(join(dirname(__file__), "dataset/HumanML3D", "Std.npy"))
+    return data * std + mean
 
 
 def load_dataset(args, n_frames):

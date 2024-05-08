@@ -26,8 +26,8 @@ def load_model_blending_and_diffusion(
     return model, diffusion
 
 
-def load_model(args, data, device, ModelClass=MDM):
-    model, diffusion = create_model_and_diffusion(args, data, ModelClass=ModelClass)
+def load_model(args, device, ModelClass=MDM):
+    model, diffusion = create_model_and_diffusion(args, ModelClass=ModelClass)
     model_path = join(dirname(__file__), "..", args.model_path)
     logger.info(f"Loading checkpoints from [{model_path}]...")
     state_dict = torch.load(model_path, map_location="cpu")
@@ -88,24 +88,19 @@ def load_split_mdm(model, state_dict, cutting_point):
     )
 
 
-def create_model_and_diffusion(
-    args, data, ModelClass=MDM, DiffusionClass=SpacedDiffusion
-):
-    model = ModelClass(**get_model_args(args, data))
+def create_model_and_diffusion(args, ModelClass=MDM, DiffusionClass=SpacedDiffusion):
+    model = ModelClass(**get_model_args(args))
     diffusion = create_gaussian_diffusion(args, DiffusionClass)
     return model, diffusion
 
 
-def get_model_args(args, data):
+def get_model_args(args):
 
     # default args
     clip_version = "ViT-B/32"
     action_emb = "tensor"
-    cond_mode = "text" if args.dataset in ["humanml", "babel", "pw3d"] else "action"
-    if hasattr(data.dataset, "num_actions"):
-        num_actions = data.dataset.num_actions
-    else:
-        num_actions = 1
+    cond_mode = "text"
+    num_actions = 1
 
     # SMPL defaults
     data_rep = "rot6d"
